@@ -1,0 +1,128 @@
+<!-- 修改密码功能还没完成 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息管理</title>
+    <script src="/js/axios-0.18.0.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/JWTtoken.gxh.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>个人信息管理</h1>
+        用户名：<input type="text" v-model="username" disabled><br>
+        <input type="button" value="修改个人信息" @click="function(){form='info';}">
+        <input type="button" value="修改密码" @click="function(){form='password';}">
+        <div v-if="form=='info'">
+            个人简介：<input type="text" v-model="selfIntro"><br>
+            <input type="button" value="确认修改个人信息" @click="submit">
+        </div>
+        <div v-if="form=='password'">
+            密码：<input type="password" v-model="oldpassword"><br>
+            新密码：<input type="password" v-model="password"><br>
+            确认新密码：<input type="password" v-model="password2"><br>
+            <input type="button" value="确认修改密码" @click="submitpassword">
+        </div>
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data: {
+            username:"小明",
+            oldpassword:"123456",
+            password:"123456",
+            password2:"123456",
+            selfIntro:"我是小明",
+            form:"info"
+        },
+        methods:{
+            submit:function(){
+                if (!confirm("确定要这样修改吗？")) {
+                    return
+                }
+                axios.put("/api/user", {
+                    username:this.username,
+                    selfIntro:this.selfIntro
+                }).then(result => {
+                    if (result.data.code) {
+                        alert("修改成功！")
+                    }
+                    else {
+                        alert("修改失败：" + result.data.msg)
+                    }
+                })
+            },
+            submitpassword:function() {
+                if (this.password.length == 0 || this.username == 0) {
+                    alert("用户名或密码不能为空")
+                }
+                else if(this.password != this.password2){
+                    alert("二次密码不一致")
+                }
+                else {
+                    if (confirm("您确定要修改吗？")) {
+                        axios.put("/api/user",{
+                            password:this.oldpassword
+                        }).then(result => {
+                            if (result.data.code) {
+                                
+                                alert("修改成功！")
+                            }
+                            else {
+                                alert("修改失败：" + result.data.msg)
+                            }
+                        })
+                    }
+                }
+            }
+        }
+    })
+</script>
+</html>
+
+<!-- 接口文档：
+基本信息：
+    请求路径：/api/user
+    请求方式：PUT
+    接口描述：修改用户的基本信息，修改完毕返回修改成功
+请求参数：
+    格式：json
+    参数说明：
+        名称    类型    是否必须    备注
+        username          是          用户名
+        selfIntro         否          用户信息
+    样例：
+    {
+        "username":"小刚",
+        "selfIntro":"我不是小刚"
+    }
+响应数据：
+    说明：
+    Result类型：若修改失败则msg属性为错误信息，如“不存在该用户”
+-->
+
+<!-- 接口文档：
+基本信息：
+    请求路径：/api/user/updatePassword
+    请求方式：PUT
+    接口描述：修改用户的密码，修改完毕返回修改成功
+请求参数：
+    格式：json
+    参数说明：
+        名称    类型    是否必须    备注
+        username          是          用户名
+        oldpassword       是          原来的密码
+        password           是          新密码
+    样例：
+    {
+        "username":"小刚",
+        "oldpassword":"333333",
+        "password":"123456"
+    }
+响应数据：
+    说明：
+    Result类型：若修改失败则msg属性为错误信息，如“密码错误”
+-->

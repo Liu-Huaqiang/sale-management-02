@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSTMAN v0.0</title>
+    <script src="/js/axios-0.18.0.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <style>
+        #addr {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <form :action="url" method="method">
+            <h1>POSTMAN v0.0</h1>
+            <h5>(由于是使用axios，所以需要服务端先解决跨域问题)</h5>
+            地址：
+            <input id="addr" type="text" v-model="url"><br>
+            方法：
+            <select name="" v-model="method" @click="show()">
+                <option value="get">get</option>
+                <option value="post">post</option>
+                <option value="delete">delete</option>
+                <option value="put">put</option>
+            </select>
+            <br>
+            <input type="checkbox" v-model="hasRes">有响应体：<br>
+            <textarea v-model="data" id="" cols="30" rows="10" :disabled="!hasRes">asdfasaaf</textarea>
+            <br>
+            <input type="button" @click="submit()" value="提交">
+            <!-- <input type="button" @click="show()" value="提交"> -->
+        </form>
+    </div>
+</body>
+<script>
+    vue = new Vue({
+        el:"#app",
+        data: {
+            method:"get",
+            url:"http://localhost:3333/api",
+            data:"a=123",
+            hasRes:"true"
+        },
+        methods: {
+            show:function () {
+                console.log(this.method);
+                console.log(this.data);
+                console.log(this.hasRes);
+            },
+            submit:function() {
+                if (this.method == "get") {
+                    axios({
+                        method:"get",
+                        url: vue.url + hasRes?"?" + vue.data:null
+                    })
+                }
+                else {
+                    axios({
+                        method:this.method,
+                        url:this.url,
+                        data:vue.hasRes?JSON.parse(vue.data):null
+                    })
+                }
+            }
+        },
+    })
+</script>
+</html>

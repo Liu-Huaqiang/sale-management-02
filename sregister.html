@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <script src="/js/axios-0.18.0.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/JWTtoken.gxh.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>用户注册</h1>
+        请填写您的用户名：<input type="text" v-model="username"><br>
+        请填写您的密码：<input type="password" v-model="password"><br>
+        请确认您的密码：<input type="password" v-model="password2"><br>
+        <input type="button" value="确认注册" @click="submit">
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            username:"小刚",
+            password:"123456",
+            password2:"123456"
+        },
+        methods: {
+            submit:function() {
+                if (this.password.length == 0 || this.username == 0) {
+                    alert("用户名或密码不能为空")
+                }
+                else if(this.password != this.password2){
+                    alert("二次密码不一致")
+                }
+                else {
+                    if (confirm("您确定要注册吗？")) {
+                        axios.post("/api/register",{
+                            username:this.username,
+                            password:this.password
+                        }).then(result => {
+                            if (result.data.code) {
+                                alert("注册成功！")
+                                location.href="swelcome.html"
+                            }
+                            else {
+                                alert("注册失败：" + result.data.msg)
+                            }
+                        })
+                    }
+                }
+            }
+
+        },
+    })
+</script>
+</html>
+
+<!-- 接口文档：
+基本信息：
+    请求路径：/api/register
+    请求方式：POST
+    接口描述：发送注册用户的基本信息，注册完毕返回注册成功
+请求参数：
+    格式：json
+    参数说明：
+        名称    类型    是否必须    备注
+        username                    用户名
+        password                    密码
+    样例：
+    {
+        "username":"小刚",
+        "password":"123456"
+    }
+响应数据：
+    说明：
+    Result类型：若注册失败则msg属性为错误信息，如“该用户名已被注册”
+-->

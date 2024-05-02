@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <script src="/js/axios-0.18.0.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/JWTtoken.gxh.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>用户登录</h1>
+        <span>用户名：</span><input type="text" v-model="username"><br>
+        <span>密码：</span><input type="password" v-model="password"><br>
+        <input type="button" value="登录" @click="submit"><br>
+        <a href="/sregister.html">注册</a>
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            username:"小明",
+            password:"123456",
+            registerHref:"/sregister.html"
+        },
+        methods:{
+            submit:function() {
+                axios.post("/api/login",{
+                    username:this.username,
+                    password:this.password
+            }).then(result => {
+                if (result.data.code == 1) {
+                    location.href="/swelcome.html"
+                }
+                else {
+                    alert("用户名或密码不正确！")
+                }
+            })
+            }
+        }
+    })
+</script>
+</html>
